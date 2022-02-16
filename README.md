@@ -14,3 +14,9 @@ A typical board is represented as an array:
 ## The Task
 
 Given a board, and a goal board, the agents must find the optimal path to get to their correct position in the gold state.
+
+#### The solution is an A* algorithm that uses the Euclidean distance between each agent location and the desired goal location, by calculating all possible solutions for each state.
+
+## How To Use
+
+Inside the `data.py` file place your `starting_board` state and  the `goal_board` state and run `python main.py` command in terminal to let the magic begin!
