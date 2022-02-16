@@ -1,79 +1,14 @@
 from queue import PriorityQueue
+from utils import print_route, check_if_action_is_okay, h, find_agents_locations
+from data import starting_board, goal_board
 import copy
 
 
-starting_board = [[2, 0, 2, 0, 2, 0],
-                  [0, 0, 0, 2, 1, 2],
-                  [1, 0, 0, 0, 0, 0],
-                  [0, 0, 1, 0, 1, 0],
-                  [2, 0, 0, 0, 0, 0],
-                  [0, 1, 0, 0, 0, 0]]
-
-goal_board = [[2, 0, 2, 0, 0, 0],
-              [0, 0, 0, 2, 1, 2],
-              [1, 0, 0, 0, 0, 0],
-              [0, 0, 1, 0, 1, 2],
-              [0, 0, 0, 0, 0, 0],
-              [0, 1, 0, 0, 0, 0]]
-
-
-
-
-def find_agents_locations(board):
-    agents_locations = []
-    for i in range(len(board)):
-        for j in range(len(board[i])):
-            if board[i][j] == 2:
-                agents_locations.append((i, j))  # append location (x,y)
-    return agents_locations
-
-
-def h(current_board, goal):
-    # Our hieuristic
-
-    def calc_heuristic_for_each_agent(start_loc, goal_loc):
-        # Find the distance between two agents
-        return abs(goal_loc[0] - start_loc[0]) + abs(goal_loc[1] - start_loc[1])
-
-    # Find the indexes of all agents in the current_board and the goal_board
-    index_agents_current = []
-    index_agents_goal = []
-
-    index_agents_current = find_agents_locations(current_board)
-    index_agents_goal = find_agents_locations(goal)
-    max_dist = float('-inf')  # This is our longest distance
-
-    for i in range(len(index_agents_current)):
-        dist = calc_heuristic_for_each_agent(
-            index_agents_current[i], index_agents_goal[i])  # distance between two agents
-        if dist > max_dist:
-            max_dist = dist
-    return max_dist
-
-
-def check_if_action_is_okay(agents_positions):
-    original_length = len(agents_positions)
-    set_length = len(set(agents_positions))
-    return set_length == original_length
-
-
-def convert_to_tuples(board):
-    return tuple(map(tuple, board))
-
-
-def print_route(node):
-
-    # Print the route we came from
-    if node is None:
-        return
-
-    for row in node[3]:
-        print(row)
-    print()
-    print_route(node[4])
-
 
 def a_star(board, goal):
+
+    def convert_to_tuples(board):
+        return tuple(map(tuple, board))
 
     explored = set()
     inside_frontier = set() # board that are currently inside the frontier
@@ -97,7 +32,6 @@ def a_star(board, goal):
   
 
         if exp == g_tup:
-            # TODO: return success
             print_route(node)
             return True
 
@@ -115,7 +49,10 @@ def a_star(board, goal):
         actions = []
 
         def find_all_actions(boar, agents, i=0, new_agents=[]):
-            # checking optipons to move
+            '''
+            Finding All possible combinations of next board state recursively
+            '''
+
             if i >= len(agents):
                 s = set(new_agents)
                 if len(s) == len(agents):
@@ -133,7 +70,6 @@ def a_star(board, goal):
             find_all_actions(boar, agents, i=i+1,
                              new_agents=new_agents + [(x-1, y)])
 
-        print(len(actions))
         find_all_actions(b, agent_indexes)
         # actions = set(tuple(actions))k
 
@@ -162,7 +98,7 @@ def a_star(board, goal):
                         new_b[new_x][new_y] = 2
 
                     except Exception as e:
-                        # print(e)
+
                         pass
 
             if (not goal_num_agents == len(find_agents_locations(new_b))) or flag:
@@ -190,4 +126,6 @@ def a_star(board, goal):
     return False
 
 
-print(a_star(starting_board, goal_board))
+
+if __name__ == '__main__':
+    print(a_star(starting_board, goal_board))
